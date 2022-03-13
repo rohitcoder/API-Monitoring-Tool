@@ -1,9 +1,8 @@
 from twilio.rest import Client
 from pymongo import MongoClient
 from tinydb import TinyDB, Query
-import requests, yaml, os, time, yaml, logging
+import requests, yaml, os, time, yaml
 
-logging.basicConfig(filename='error.log', encoding='utf-8', level=logging.ERROR)
 absolutePath = os.getcwd()
 
 with open(os.path.join(os.path.dirname(__file__), 'config.yaml'), 'r') as ymlfile:
@@ -24,16 +23,7 @@ def MongoInsertMany(collection, data):
     return mongoConnection[config['MONGO_DB']][collection].insert_many(data)
 
 def DoLogging(logType, msg):
-    if logType == 'info':
-        logging.info(msg)
-    elif logType == 'error':
-        logging.error(msg)
-    elif logType == 'debug':
-        logging.debug(msg)
-    elif logType == 'warning':
-        logging.warning(msg)
-    else:
-        logging.warning(msg)
+    print("[{}] {}".format(logType, msg))
 
 def getConfig():
     return config

@@ -1,5 +1,6 @@
 config.yaml
 error.log
+last_message.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

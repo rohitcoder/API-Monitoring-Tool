@@ -68,35 +68,37 @@ def ReadYaml(fileName):
     return config
 
 def sendTwiliomessage(message):
-    print(message)
-    try:
-        account_sid = config['TWILIO_ACCOUNT_SID']
-        auth_token = config['TWILIO_AUTH_TOKEN']
-        client = Client(account_sid, auth_token)
-        message = client.messages.create(
-            body=message,
-            from_=config['TWILIO_FROM'],
-            to=config['PHONE_TO_TEXT']
-        )
-    except Exception as e:
-        DoLogging("error", "Error occurred for twillio message: {}".format(e))
+    ## send message only when last message sent more than 5 mins ago, to save msg credits
+    last_message = ReadTinyDB('last_message.json', 'last_message')
+    if last_message.all() == [] or last_message.all()[0]['timestamp'] < round(time.time() * 1000) - 300000:
+        try:
+            account_sid = config['TWILIO_ACCOUNT_SID']
+            auth_token = config['TWILIO_AUTH_TOKEN']
+            client = Client(account_sid, auth_token)
+            message = client.messages.create(
+                body=message,
+                from_=config['TWILIO_PHONE_NUMBER'],
+                to=config['PHONE_TO_TEXT']
+            )
+            WriteToTinyDB('last_message.json', 'last_message', {'timestamp': round(time.time() * 1000)})
+            return message
+        except Exception as e:
+            DoLogging("error", "Error occurred for twillio message: {}".format(e))
     return message
 
 def SlackAlert(msg):
-    '''
     return requests.post(config['SLACK_WEBHOOK'], json={"text": msg})
-    '''
 
 def Notify(msg):
     """
     Notify(msg)
     Send a message to Slack and Twilio.
     """
+    print(msg)
     SlackAlert(msg)
     sendTwiliomessage(msg)
 
 def LogicBuilder(keyToCheck, valueToCheck, operator, message):
-    print("Checking value: {} {} {}".format(keyToCheck, operator, valueToCheck))
     if operator == '>':
         if keyToCheck > valueToCheck:
             Notify(message)

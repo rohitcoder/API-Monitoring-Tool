@@ -1,0 +1,2 @@
+# API-Monitoring-Tool
+This tool helps you watch multiple APIs and get alerts on some cases, this helps you detecting any downtime and this alerts you via slack and SMS, historical records are also stored for analytical purpose to generate some charts which shows overall health and response time of your APIs.

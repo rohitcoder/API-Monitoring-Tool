@@ -1,0 +1,45 @@
+SLACK_WEBHOOK: 'https://hooks.slack.com/services/XXXXXX/YYYYYY/ZZZZZZZZ'
+MONGO_URL: 'mongo://localhost:27017/'
+TWILLIO_ACCOUNT_SID: 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+TWILLIO_AUTH_TOKEN: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+TWILLIO_PHONE_NUMBER: '+1XXXXXXXXXX'
+PHONE_TO_TEXT: '+1XXXXXXXXXX'
+MONGO_DB: 'apiResponses'
+endpoints:
+  - name: 'GraphQL Prod API'
+    description: "This is Description for GraphQL Prod API"
+    url: 'https://api.graphql.com/graphql'
+    method: 'POST'
+    headers:
+      - 'Content-Type': 'application/json'
+    body: 
+      '{
+        "query": "{
+          user(id: 1) {
+            id
+            name
+            email
+            createdAt
+            updatedAt
+          }
+        }"
+      }'
+    alert_conditions:
+    ## currently supported operators: '>', '<', '==', '!='
+    ## Supported types: response_time, response_code
+      - name: 'Response Time'
+        type: 'response_time'
+        operator: '>'
+        value: '500'
+        message: 'New Alert: Response time for API detected {value} ms'
+      - name: 'Status Code'
+        type: 'status_code'
+        operator: '!='
+        value: '200'
+        message: 'New Alert: Response code is {value}'
+  - name: 'Rest API'
+    description: "This is Description for Rest API"
+    url: 'https://google.com'
+    method: 'GET'
+    headers:
+      - 'Content-Type': 'application/json'
